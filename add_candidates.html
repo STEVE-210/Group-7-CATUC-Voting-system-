@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Candidate - CATUC VoteSmart</title>
+    <style>
+        body {
+            background-color: #e6f0ff; 
+            margin: 0;
+        }
+        header {
+            background-color: #004aad; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            width: 100%;
+        }
+        .logo-left, .logo-right {
+            height: 60px;
+        }
+        header h1 {
+            color: white;
+            font-size: 22px;
+            text-align: center;
+            margin: 0;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+<header>
+        <img src="logo.png.jpg" class="logo-left">
+        <h1>🗳️ CATUC VoteSmart</h1>
+        <img src="logo.png.jpg" class="logo-right">
+    </header>
+<h2>Add Candidate</h2>
+
+<input type="text" id="cName" placeholder="Candidate Full Name"><br><br>
+<input type="text" id="cDept" placeholder="Department"><br><br>
+
+<label>Profile Photo:</label>
+<input type="file" id="cPhoto"><br><br>
+
+<label>Campaign Position:</label>
+<select id="cCampaign">
+  <option>SUG PRESIDENT</option>
+  <option>FINANCE MINISTER</option>
+  <option>SPORTS COORDINATOR</option>
+</select><br><br>
+
+<button onclick="addCandidate()">Save Candidate</button>
+
+<hr>
+<h2>Current Registered Candidates</h2>
+<div id="candidateList"></div>
+
+<script>
+    function addCandidate(){
+    let name = document.getElementById("cName").value;
+    let dept = document.getElementById("cDept").value;
+    let campaign = document.getElementById("cCampaign").value;
+    let photoFile = document.getElementById("cPhoto").files[0];
+
+    let reader = new FileReader();
+    reader.readAsDataURL(photoFile);
+
+    reader.onload = function(){
+        let candidates = JSON.parse(localStorage.getItem("candidates")) || [];
+
+        candidates.push({
+            name: name,
+            department: dept,
+            campaign: campaign,
+            photo: reader.result
+        });
+
+        localStorage.setItem("candidates", JSON.stringify(candidates));
+        displayCandidates();
+
+        alert("Candidate added successfully!");
+    }
+}
+function displayCandidates(){
+    let candidates = JSON.parse(localStorage.getItem("candidates")) || [];
+    let html = "";
+
+    candidates.forEach(c => {
+        html += `
+        <div style="border:1px solid #004aad; margin:5px; padding:10px;">
+            <img src="${c.photo}" height="60"><br>
+            <strong>${c.name}</strong><br>
+            ${c.department}<br>
+            Campaign: ${c.campaign}
+        </div>
+        `;
+    });
+
+    document.getElementById("candidateList").innerHTML = html;
+}
+
+displayCandidates();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Voters</title>
+    <style>
+            
+
+        body{font-family:Arial;background:rgb(237, 239, 248);padding:30px;}
+        table{border-collapse:collapse;width:100%;margin-top:20px;}
+        td,th{border:1px solid #aaa;padding:8px;}
+        button{padding:5px 10px;border:none;background:red;color:white;border-radius:4px;}
+        h2{color:blue;}
+        header {
+    background-color: #004aad; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.logo-left, .logo-right {
+    height: 60px;
+}
+
+header h1 {
+    color: white;
+    font-size: 22px;
+    text-align: center;
+    margin: 0;
+    flex-grow: 1;
+}
+
+    </style>
+</head>
+<body>
+<header>
+        <img src="logo.png.jpg" class="logo-left">
+        <h1>🗳️ CATUC VoteSmart</h1>
+        <img src="logo.png.jpg" class="logo-right">
+    </header>
+<h2>Manage Registered Voters</h2>
+
+<table>
+    <tr>
+        <th>Matricule</th>
+        <th>Action</th>
+    </tr>
+    <tbody id="voterTable"></tbody>
+</table>
+
+<script>
+    let voters = JSON.parse(localStorage.getItem("voters")) || ["CT2021A01","CT2021A02"];
+
+    function loadVoters(){
+        let area = document.getElementById("voterTable");
+        area.innerHTML = "";
+
+        voters.forEach((v,index)=>{
+            area.innerHTML += `
+            <tr>
+                <td>${v}</td>
+                <td><button onclick='removeVoter(${index})'>Remove</button></td>
+            </tr>`;
+        });
+    }
+
+    function removeVoter(i){
+        voters.splice(i,1);
+        localStorage.setItem("voters", JSON.stringify(voters));
+        loadVoters();
+    }
+
+    loadVoters();
+</script>
+
+</body>
+</html>

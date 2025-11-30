@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CATUC VoteSmart - Results</title>
+    <style>
+        body{font-family:Arial;background:rgb(212, 220, 244);padding:30px;}
+        h2{color:blue;}
+        header {
+    background-color: #004aad; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.logo-left, .logo-right {
+    height: 60px;
+}
+
+header h1 {
+    color: white;
+    font-size: 22px;
+    text-align: center;
+    margin: 0;
+    flex-grow: 1;
+}
+
+    </style>
+</head>
+<body>
+<header>
+        <img src="logo.png.jpg" class="logo-left">
+        <h1>🗳️ CATUC VoteSmart</h1>
+        <img src="logo.png.jpg" class="logo-right">
+    </header>
+    
+<h2>Election Results</h2>
+
+<div id="resultBox"></div>
+
+<script>
+    let votes = JSON.parse(localStorage.getItem("votes")) || {};
+    let area = document.getElementById("results");
+
+    if(Object.keys(votes).length === 0){
+        area.innerHTML = "No votes yet";
+    } else {
+        for(let c in votes){
+            area.innerHTML += `<p><b>${c}</b>: ${votes[c]} votes</p>`;
+        }
+    }
+
+    let votes = JSON.parse(localStorage.getItem("votes")) || {};
+let candidates = JSON.parse(localStorage.getItem("candidates")) || [];
+
+let html = "";
+
+for(let c of candidates){
+
+    // If candidate has zero votes
+    let count = votes[c.name] ? votes[c.name] : 0;
+
+    html += `
+        <div style="border:1px solid #004aad; padding:8px; margin:5px;">
+            <img src="${c.photo}" height="50"><br>
+            <strong>${c.name}</strong><br>
+            ${c.department}<br>
+            Campaign: ${c.campaign}<br>
+            <h3 style="color:#004aad;">Votes: ${count}</h3>
+        </div>
+    `;
+}
+
+document.getElementById("resultBox").innerHTML = html;
+
+</script>
+
+</body>
+</html>

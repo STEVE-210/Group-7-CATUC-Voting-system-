@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Sign Up - CATUC VoteSmart</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e6f0ff;
+        }
+        .card {
+            border-radius: 12px;
+            padding: 30px;
+            background-color: white;
+            border: 2px solid #004aad;
+        }
+        h2 {
+            color: #004aad;
+        }
+        header {
+    background-color: #004aad; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.logo-left, .logo-right {
+    height: 60px;
+}
+
+header h1 {
+    color: white;
+    font-size: 22px;
+    text-align: center;
+    margin: 0;
+    flex-grow: 1;
+}
+
+    </style>
+</head>
+<body>
+     <header>
+        <img src="logo.png.jpg" class="logo-left">
+        <h1>🗳️ CATUC VoteSmart</h1>
+        <img src="logo.png.jpg" class="logo-right">
+    </header>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+
+    <div class="card" style="width: 350px;">
+        <h2>Student Sign Up</h2>
+        <form>
+            <label>Full Name</label>
+            <input type="text" class="form-control mb-2" placeholder="Enter full name">
+
+            <label>Matricule</label>
+            <input type="text" class="form-control mb-2" placeholder="Enter matricule">
+
+            <label>Email</label>
+            <input type="email" class="form-control mb-2" placeholder="Enter email">
+
+            <label>Password</label>
+            <input type="password" class="form-control mb-3" placeholder="Create password">
+
+            <button type="submit" class="btn btn-primary w-100">Create Account</button>
+        </form>
+
+        <p class="mt-2">
+            Already have an account? <a href="slogin.html">Login</a>
+        </p>
+
+        <a href="admin.html" class="btn btn-link mt-2">Back</a>
+    </div>
+</div>
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const signupForm = document.querySelector("form");
+
+    signupForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let name = document.querySelector("input[placeholder='Enter full name']").value;
+        let matricule = document.querySelector("input[placeholder='Enter matricule']").value;
+        let email = document.querySelector("input[placeholder='Enter email']").value;
+        let password = document.querySelector("input[placeholder='Create password']").value;
+
+        if (name === "" || matricule === "" || email === "" || password === "") {
+            alert("Please complete all fields.");
+        } else {
+            alert("Account created successfully!");
+            window.location.href = "slogin.html";
+        }
+    });
+});
+</script>
+
+</html>
