@@ -1,98 +1,1421 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Sign Up - CATUC VoteSmart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Student Registration - CATUC VoteSmart</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #004aad;
+            --secondary-blue: #0066cc;
+            --light-blue: #e6f0ff;
+            --accent-gold: #ffd700;
+            --error-red: #dc3545;
+            --success-green: #28a745;
+            --warning-orange: #ff9800;
+            --gradient-primary: linear-gradient(135deg, #004aad 0%, #0066cc 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            --shadow-soft: 0 8px 30px rgba(0, 74, 173, 0.08);
+            --shadow-hard: 0 10px 40px rgba(0, 74, 173, 0.15);
+            --student-gradient: linear-gradient(135deg, #004aad 0%, #2196f3 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background-color: #e6f0ff;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e6f0ff 0%, #f0f7ff 50%, #e6f0ff 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
-        .card {
-            border-radius: 12px;
-            padding: 30px;
-            background-color: white;
-            border: 2px solid #004aad;
+        
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 74, 173, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(33, 150, 243, 0.1) 0%, transparent 20%),
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 74, 173, 0.02) 10px, rgba(0, 74, 173, 0.02) 20px);
         }
-        h2 {
-            color: #004aad;
-        }
+        
+        /* Header Styles */
         header {
-    background-color: #004aad; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-}
-
-.logo-left, .logo-right {
-    height: 60px;
-}
-
-header h1 {
-    color: white;
-    font-size: 22px;
-    text-align: center;
-    margin: 0;
-    flex-grow: 1;
-}
-
+            background: var(--student-gradient);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0, 74, 173, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid var(--accent-gold);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+        
+        .logo-img {
+            height: 65px;
+            width: 65px;
+            object-fit: contain;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 300;
+            margin-top: -2px;
+        }
+        
+        /* Main Content */
+        .main-container {
+            min-height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        /* Student Registration Card */
+        .student-card {
+            background: var(--gradient-card);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-hard);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), #2196f3, var(--primary-blue));
+        }
+        
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 74, 173, 0.25);
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            background: rgba(0, 74, 173, 0.1);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        
+        .card-subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        /* Multi-step Form */
+        .form-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .form-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+        
+        .step {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #6c757d;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            border-color: var(--primary-blue);
+            background-color: var(--primary-blue);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .step.completed {
+            border-color: var(--success-green);
+            background-color: var(--success-green);
+            color: white;
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #6c757d;
+            white-space: nowrap;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-label i {
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+            width: 20px;
+        }
+        
+        .form-control {
+            padding: 14px 15px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fdfdfd;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.25rem rgba(0, 74, 173, 0.15);
+            background-color: white;
+        }
+        
+        .form-control.is-invalid {
+            border-color: var(--error-red);
+        }
+        
+        .form-control.is-valid {
+            border-color: var(--success-green);
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-blue);
+        }
+        
+        /* Phone input styling */
+        .phone-prefix {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-weight: 500;
+            z-index: 10;
+        }
+        
+        .phone-input {
+            padding-left: 70px !important;
+        }
+        
+        /* Additional Fields */
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
+        
+        /* Password Strength Meter */
+        .password-strength {
+            margin-top: 10px;
+        }
+        
+        .strength-meter {
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .strength-text {
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .strength-weak { background-color: var(--error-red); }
+        .strength-fair { background-color: var(--warning-orange); }
+        .strength-good { background-color: #ffc107; }
+        .strength-strong { background-color: var(--success-green); }
+        
+        /* Requirements List */
+        .requirements {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 74, 173, 0.03);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary-blue);
+        }
+        
+        .requirements h6 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .requirement-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        
+        .requirement-item {
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+        
+        .requirement-item i {
+            font-size: 12px;
+            width: 16px;
+        }
+        
+        .requirement-item.valid {
+            color: var(--success-green);
+        }
+        
+        .requirement-item.invalid {
+            color: #6c757d;
+        }
+        
+        /* Button Styles */
+        .btn-register {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            border: none;
+            letter-spacing: 0.5px;
+            background: var(--student-gradient);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 74, 173, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-register:hover:not(:disabled) {
+            background: linear-gradient(135deg, #003c8f 0%, #0d8bf2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 74, 173, 0.4);
+            color: white;
+        }
+        
+        .btn-register:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-register i {
+            margin-right: 10px;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border: 2px solid var(--error-red);
+            color: var(--error-red);
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 2px solid var(--success-green);
+            color: var(--success-green);
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        /* Newsletter checkbox */
+        .newsletter {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .newsletter input {
+            margin-right: 8px;
+        }
+        
+        /* Footer Links */
+        .card-footer {
+            margin-top: 25px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .footer-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .footer-link:hover {
+            color: #003c8f;
+            text-decoration: underline;
+        }
+        
+        /* Loading Animation */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .student-card {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .card-title {
+                font-size: 1.7rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .footer-link {
+                display: block;
+                margin: 10px 0;
+            }
+            
+            .form-steps::before {
+                left: 15%;
+                right: 15%;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        /* Form Navigation */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn-nav {
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-prev {
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            color: #495057;
+        }
+        
+        .btn-prev:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .btn-next {
+            background: var(--student-gradient);
+            border: none;
+            color: white;
+        }
+        
+        .btn-next:hover {
+            background: linear-gradient(135deg, #003c8f 0%, #0d8bf2 100%);
+        }
     </style>
 </head>
 <body>
-     <header>
-        <img src="logo.png.jpg" class="logo-left">
-        <h1>🗳️ CATUC VoteSmart</h1>
-        <img src="logo.png.jpg" class="logo-right">
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo-container">
+                <img src="logo.png.jpg" alt="CATUC Logo" class="logo-img">
+                <div class="logo-text">
+                    <h1 class="logo-title">CATUC VoteSmart</h1>
+                    <p class="logo-subtitle">Student Registration Portal</p>
+                </div>
+            </a>
+        </div>
     </header>
-
-<div class="d-flex justify-content-center align-items-center vh-100">
-
-    <div class="card" style="width: 350px;">
-        <h2>Student Sign Up</h2>
-        <form>
-            <label>Full Name</label>
-            <input type="text" class="form-control mb-2" placeholder="Enter full name">
-
-            <label>Matricule</label>
-            <input type="text" class="form-control mb-2" placeholder="Enter matricule">
-
-            <label>Email</label>
-            <input type="email" class="form-control mb-2" placeholder="Enter email">
-
-            <label>Password</label>
-            <input type="password" class="form-control mb-3" placeholder="Create password">
-
-            <button type="submit" class="btn btn-primary w-100">Create Account</button>
-        </form>
-
-        <p class="mt-2">
-            Already have an account? <a href="slogin.html">Login</a>
-        </p>
-
-        <a href="admin.html" class="btn btn-link mt-2">Back</a>
-    </div>
-</div>
-</body>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const signupForm = document.querySelector("form");
-
-    signupForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        let name = document.querySelector("input[placeholder='Enter full name']").value;
-        let matricule = document.querySelector("input[placeholder='Enter matricule']").value;
-        let email = document.querySelector("input[placeholder='Enter email']").value;
-        let password = document.querySelector("input[placeholder='Create password']").value;
-
-        if (name === "" || matricule === "" || email === "" || password === "") {
-            alert("Please complete all fields.");
-        } else {
-            alert("Account created successfully!");
-            window.location.href = "slogin.html";
-        }
-    });
+    
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="student-card animate-fade-in">
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+            
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h2 class="card-title">Student Registration</h2>
+                <p class="card-subtitle">Create your account to participate in CATUC elections</p>
+                
+                <!-- Progress Steps -->
+                <div class="form-steps">
+                    <div class="step active" id="step1">
+                        1
+                        <span class="step-label">Personal</span>
+                    </div>
+                    <div class="step" id="step2">
+                        2
+                        <span class="step-label">Academic</span>
+                    </div>
+                    <div class="step" id="step3">
+                        3
+                        <span class="step-label">Account</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="studentSignupForm">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step" id="formStep1">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <div class="input-group">
+                            <input type="text" 
+                                   id="fullName" 
+                                   class="form-control" 
+                                   placeholder="Enter your full name"
+                                   required
+                                   minlength="3"
+                                   maxlength="50">
+                            <i class="fas fa-user-circle input-icon"></i>
+                        </div>
+                        <small class="form-text text-muted">As it appears on your student ID card</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-phone"></i>
+                            Phone Number
+                        </label>
+                        <div class="input-group">
+                            <span class="phone-prefix">+237</span>
+                            <input type="tel" 
+                                   id="phone" 
+                                   class="form-control phone-input" 
+                                   placeholder="6XX XXX XXX"
+                                   pattern="[0-9\s]+"
+                                   minlength="9"
+                                   maxlength="15"
+                                   oninput="formatPhoneNumber(this)">
+                            <i class="fas fa-mobile-alt input-icon"></i>
+                        </div>
+                        <small class="form-text text-muted">Cameroon number format: +237 6XX XXX XXX</small>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Academic Information -->
+                <div class="form-step" id="formStep2" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-id-card"></i>
+                            Matricule Number
+                        </label>
+                        <div class="input-group">
+                            <input type="text" 
+                                   id="matricule" 
+                                   class="form-control" 
+                                   pattern="[A-Za-z0-9]+"
+                                   minlength="5"
+                                   maxlength="20">
+                            <i class="fas fa-hashtag input-icon"></i>
+                        </div>
+                        <small class="form-text text-muted">Your official CATUC Matricule number</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-graduation-cap"></i>
+                                Faculty
+                            </label>
+                            <select id="faculty" class="form-control" required>
+                                <option value="" selected disabled>Select Faculty</option>
+                                <option value="engineering">Faculty of Engineering & Technology</option>
+                                <option value="business">Faculty of Business & Management</option>
+                                <option value="science">Faculty of Science</option>
+                                <option value="arts">Faculty of Arts & Humanities</option>
+                                <option value="law">Faculty of Law</option>
+                                <option value="medicine">Faculty of Medicine</option>
+                                <option value="education">Faculty of Education</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Year of Study
+                            </label>
+                            <select id="year" class="form-control" required>
+                                <option value="" selected disabled>Select Year</option>
+                                <option value="1">Year 1</option>
+                                <option value="2">Year 2</option>
+                                <option value="3">Year 3</option>
+                                <option value="4">Year 4</option>
+                                <option value="5">Year 5</option>
+                                <option value="6">Year 6</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Account Information -->
+                <div class="form-step" id="formStep3" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i>
+                            Email Address
+                        </label>
+                        <div class="input-group">
+                            <input type="email" 
+                                   id="email" 
+                                   class="form-control" 
+                                   placeholder="student@catuc.edu"
+                                   required
+                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                            <i class="fas fa-at input-icon"></i>
+                        </div>
+                        <small class="form-text text-muted">Use your CATUC email if available</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   id="password" 
+                                   class="form-control" 
+                                   placeholder="Create a strong password"
+                                   required
+                                   minlength="8"
+                                   oninput="updatePasswordStrength()">
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <i class="fas fa-shield-alt input-icon"></i>
+                        </div>
+                        
+                        <!-- Password Strength Meter -->
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Very weak</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Confirm Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   id="confirmPassword" 
+                                   class="form-control" 
+                                   placeholder="Re-enter your password"
+                                   required
+                                   minlength="8">
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <i class="fas fa-check-circle input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Requirements -->
+                    <div class="requirements">
+                        <h6><i class="fas fa-list-check"></i> Password Requirements</h6>
+                        <ul class="requirement-list" id="requirementList">
+                            <li class="requirement-item" id="reqLength">
+                                <i class="fas fa-circle" id="reqLengthIcon"></i>
+                                At least 8 characters
+                            </li>
+                            <li class="requirement-item" id="reqUppercase">
+                                <i class="fas fa-circle" id="reqUppercaseIcon"></i>
+                                At least one uppercase letter
+                            </li>
+                            <li class="requirement-item" id="reqLowercase">
+                                <i class="fas fa-circle" id="reqLowercaseIcon"></i>
+                                At least one lowercase letter
+                            </li>
+                            <li class="requirement-item" id="reqNumber">
+                                <i class="fas fa-circle" id="reqNumberIcon"></i>
+                                At least one number
+                            </li>
+                            <li class="requirement-item" id="reqSpecial">
+                                <i class="fas fa-circle" id="reqSpecialIcon"></i>
+                                At least one special character
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Newsletter Subscription -->
+                    <div class="newsletter">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                <i class="fas fa-bell me-1"></i>
+                                Subscribe to election updates and notifications
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="form-navigation" id="formNavigation">
+                    <button type="button" class="btn btn-prev" id="prevBtn" style="display: none;">
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button type="button" class="btn btn-next" id="nextBtn">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-register" id="registerButton" style="display: none;">
+                        <i class="fas fa-user-plus"></i>
+                        Create Student Account
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Footer Links -->
+            <div class="card-footer">
+                <a href="slogin.html" class="footer-link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Already have an account? Login
+                </a>
+                
+                <a href="admin.html" class="footer-link">
+                    <i class="fas fa-home"></i>
+                    Back to Homepage
+                </a>
+            </div>
+            
+            <!-- Verification Notice -->
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-user-check me-2"></i>
+                <strong>Verification Required:</strong> Your student status will be verified before you can vote. This usually takes 24-48 hours.
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Multi-step form variables
+            let currentStep = 1;
+            const totalSteps = 3;
+            
+            // DOM Elements
+            const signupForm = document.getElementById('studentSignupForm');
+            const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+            const formSteps = [document.getElementById('formStep1'), document.getElementById('formStep2'), document.getElementById('formStep3')];
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const registerBtn = document.getElementById('registerButton');
+            
+            // Form fields
+            const fullNameInput = document.getElementById('fullName');
+            const phoneInput = document.getElementById('phone');
+            const matriculeInput = document.getElementById('matricule');
+            const facultySelect = document.getElementById('faculty');
+            const yearSelect = document.getElementById('year');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const toggleConfirmPasswordBtn = document.getElementById('toggleConfirmPassword');
+            const alertContainer = document.getElementById('alertContainer');
+            const newsletter = document.getElementById('newsletter');
+            
+            // Password strength elements
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            // Requirement elements
+            const reqLength = document.getElementById('reqLength');
+            const reqUppercase = document.getElementById('reqUppercase');
+            const reqLowercase = document.getElementById('reqLowercase');
+            const reqNumber = document.getElementById('reqNumber');
+            const reqSpecial = document.getElementById('reqSpecial');
+            const reqLengthIcon = document.getElementById('reqLengthIcon');
+            const reqUppercaseIcon = document.getElementById('reqUppercaseIcon');
+            const reqLowercaseIcon = document.getElementById('reqLowercaseIcon');
+            const reqNumberIcon = document.getElementById('reqNumberIcon');
+            const reqSpecialIcon = document.getElementById('reqSpecialIcon');
+            
+            // Multi-step form navigation
+            function showStep(step) {
+                // Hide all form steps
+                formSteps.forEach(formStep => {
+                    formStep.style.display = 'none';
+                });
+                
+                // Show current step
+                formSteps[step - 1].style.display = 'block';
+                
+                // Update step indicators
+                steps.forEach((stepIndicator, index) => {
+                    if (index + 1 === step) {
+                        stepIndicator.classList.add('active');
+                        stepIndicator.classList.remove('completed');
+                    } else if (index + 1 < step) {
+                        stepIndicator.classList.remove('active');
+                        stepIndicator.classList.add('completed');
+                    } else {
+                        stepIndicator.classList.remove('active', 'completed');
+                    }
+                });
+                
+                // Update navigation buttons
+                if (step === 1) {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'inline-block';
+                    registerBtn.style.display = 'none';
+                } else if (step === totalSteps) {
+                    prevBtn.style.display = 'inline-block';
+                    nextBtn.style.display = 'none';
+                    registerBtn.style.display = 'inline-block';
+                } else {
+                    prevBtn.style.display = 'inline-block';
+                    nextBtn.style.display = 'inline-block';
+                    registerBtn.style.display = 'none';
+                }
+                
+                currentStep = step;
+            }
+            
+            // Navigation button handlers
+            nextBtn.addEventListener('click', function() {
+                if (validateStep(currentStep)) {
+                    showStep(currentStep + 1);
+                }
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                showStep(currentStep - 1);
+            });
+            
+            // Toggle password visibility
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            toggleConfirmPasswordBtn.addEventListener('click', function() {
+                const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                confirmPasswordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            // Show alert function
+            function showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.innerHTML = `
+                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close float-end" onclick="this.parentElement.style.display='none'"></button>
+                `;
+                
+                alertContainer.innerHTML = '';
+                alertContainer.appendChild(alertDiv);
+                alertDiv.style.display = 'block';
+                
+                // Auto-remove success alerts after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        alertDiv.style.opacity = '0';
+                        alertDiv.style.transition = 'opacity 0.5s';
+                        setTimeout(() => alertDiv.remove(), 500);
+                    }, 5000);
+                }
+            }
+            
+            // Format phone number as user types
+            window.formatPhoneNumber = function(input) {
+                // Remove all non-digits
+                let value = input.value.replace(/\D/g, '');
+                
+                // Format as XXX XXX XXX
+                if (value.length > 0) {
+                    if (value.length <= 3) {
+                        value = value;
+                    } else if (value.length <= 6) {
+                        value = value.substr(0, 3) + ' ' + value.substr(3);
+                    } else {
+                        value = value.substr(0, 3) + ' ' + value.substr(3, 3) + ' ' + value.substr(6, 3);
+                    }
+                }
+                
+                input.value = value;
+            };
+            
+            // Step validation
+            function validateStep(step) {
+                let isValid = true;
+                let errors = [];
+                
+                switch(step) {
+                    case 1:
+                        // Validate personal information
+                        if (fullNameInput.value.trim().length < 10) {
+                            errors.push('Please Enter full name');
+                            fullNameInput.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            fullNameInput.classList.remove('is-invalid');
+                        }
+                        
+                        // Phone validation - must be 9 digits (after removing spaces)
+                        const phone = phoneInput.value.replace(/\s/g, '');
+                        if (!phone || phone.length !== 9 || !/^6[0-9]{8}$/.test(phone)) {
+                            errors.push('Please enter a valid Cameroon phone number (9 digits starting with 6)');
+                            phoneInput.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            phoneInput.classList.remove('is-invalid');
+                        }
+                        break;
+                        
+                    case 2:
+                        // Validate academic information
+                        if (matriculeInput.value.trim().length < 5) {
+                            errors.push('Matricule must be at least 5 characters');
+                            matriculeInput.classList.add('is-invalid');
+                            isValid = false;
+                        } else if (!/^[A-Za-z0-9]+$/.test(matriculeInput.value.trim())) {
+                            errors.push('Matricule can only contain letters and numbers');
+                            matriculeInput.classList.add('is-invalid');
+                            isValid = false;
+                        } else if (!isMatriculeAvailable(matriculeInput.value.trim())) {
+                            errors.push('This matricule is already registered');
+                            matriculeInput.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            matriculeInput.classList.remove('is-invalid');
+                        }
+                        
+                        if (!facultySelect.value) {
+                            errors.push('Please select your faculty');
+                            facultySelect.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            facultySelect.classList.remove('is-invalid');
+                        }
+                        
+                        if (!yearSelect.value) {
+                            errors.push('Please select your year of study');
+                            yearSelect.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            yearSelect.classList.remove('is-invalid');
+                        }
+                        break;
+                }
+                
+                if (errors.length > 0) {
+                    showAlert(errors.join('<br>'), 'error');
+                }
+                
+                return isValid;
+            }
+            
+            // Check if matricule is available
+            function isMatriculeAvailable(matricule) {
+                const students = JSON.parse(localStorage.getItem('catuc_students')) || [];
+                return !students.some(student => 
+                    student.matricule && student.matricule.toUpperCase() === matricule.toUpperCase()
+                );
+            }
+            
+            // Validate email
+            function isValidEmail(email) {
+                const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return pattern.test(email);
+            }
+            
+            // Enhanced Password strength checker
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                
+                // Check password length
+                if (password.length >= 8) {
+                    strength += 20;
+                    if (password.length >= 12) strength += 10;
+                }
+                
+                // Check for uppercase letters
+                if (/[A-Z]/.test(password)) strength += 20;
+                
+                // Check for lowercase letters
+                if (/[a-z]/.test(password)) strength += 20;
+                
+                // Check for numbers
+                if (/[0-9]/.test(password)) strength += 20;
+                
+                // Check for special characters
+                if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength += 20;
+                
+                return Math.min(strength, 100);
+            }
+            
+            // Update password strength meter
+            window.updatePasswordStrength = function() {
+                const password = passwordInput.value;
+                const strength = checkPasswordStrength(password);
+                
+                // Update meter
+                strengthFill.style.width = `${strength}%`;
+                
+                // Update text and color
+                let strengthLevel = '';
+                let colorClass = '';
+                
+                if (strength < 20) {
+                    strengthLevel = 'Very weak';
+                    colorClass = 'strength-weak';
+                } else if (strength < 40) {
+                    strengthLevel = 'Weak';
+                    colorClass = 'strength-weak';
+                } else if (strength < 60) {
+                    strengthLevel = 'Fair';
+                    colorClass = 'strength-fair';
+                } else if (strength < 80) {
+                    strengthLevel = 'Good';
+                    colorClass = 'strength-good';
+                } else {
+                    strengthLevel = 'Strong';
+                    colorClass = 'strength-strong';
+                }
+                
+                strengthFill.className = `strength-fill ${colorClass}`;
+                strengthText.textContent = strengthLevel;
+                
+                // Update requirement indicators
+                updateRequirementIndicators(password);
+            };
+            
+            // Update requirement indicators
+            function updateRequirementIndicators(password) {
+                // Length requirement
+                const lengthValid = password.length >= 8;
+                reqLength.classList.toggle('valid', lengthValid);
+                reqLength.classList.toggle('invalid', !lengthValid);
+                reqLengthIcon.className = lengthValid ? 'fas fa-check-circle' : 'fas fa-circle';
+                reqLengthIcon.style.color = lengthValid ? 'var(--success-green)' : '';
+                
+                // Uppercase requirement
+                const uppercaseValid = /[A-Z]/.test(password);
+                reqUppercase.classList.toggle('valid', uppercaseValid);
+                reqUppercase.classList.toggle('invalid', !uppercaseValid);
+                reqUppercaseIcon.className = uppercaseValid ? 'fas fa-check-circle' : 'fas fa-circle';
+                reqUppercaseIcon.style.color = uppercaseValid ? 'var(--success-green)' : '';
+                
+                // Lowercase requirement
+                const lowercaseValid = /[a-z]/.test(password);
+                reqLowercase.classList.toggle('valid', lowercaseValid);
+                reqLowercase.classList.toggle('invalid', !lowercaseValid);
+                reqLowercaseIcon.className = lowercaseValid ? 'fas fa-check-circle' : 'fas fa-circle';
+                reqLowercaseIcon.style.color = lowercaseValid ? 'var(--success-green)' : '';
+                
+                // Number requirement
+                const numberValid = /[0-9]/.test(password);
+                reqNumber.classList.toggle('valid', numberValid);
+                reqNumber.classList.toggle('invalid', !numberValid);
+                reqNumberIcon.className = numberValid ? 'fas fa-check-circle' : 'fas fa-circle';
+                reqNumberIcon.style.color = numberValid ? 'var(--success-green)' : '';
+                
+                // Special character requirement
+                const specialValid = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+                reqSpecial.classList.toggle('valid', specialValid);
+                reqSpecial.classList.toggle('invalid', !specialValid);
+                reqSpecialIcon.className = specialValid ? 'fas fa-check-circle' : 'fas fa-circle';
+                reqSpecialIcon.style.color = specialValid ? 'var(--success-green)' : '';
+            }
+            
+           // Handle form submission
+signupForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validate step 3
+    if (!validateStep(3)) {
+        return;
+    }
+    
+    // Final validation
+    let errors = [];
+    
+    if (!isValidEmail(emailInput.value.trim())) {
+        errors.push('Please enter a valid email address');
+        emailInput.classList.add('is-invalid');
+    } else {
+        emailInput.classList.remove('is-invalid');
+    }
+    
+    const password = passwordInput.value;
+    const passwordErrors = [];
+    
+    // Password validation (keep existing validation logic)
+    if (passwordErrors.length > 0) {
+        errors = errors.concat(passwordErrors);
+        passwordInput.classList.add('is-invalid');
+    } else {
+        passwordInput.classList.remove('is-invalid');
+    }
+    
+    if (password !== confirmPasswordInput.value) {
+        errors.push('Passwords do not match');
+        confirmPasswordInput.classList.add('is-invalid');
+    } else {
+        confirmPasswordInput.classList.remove('is-invalid');
+    }
+    
+    if (errors.length > 0) {
+        showAlert(errors.join('<br>'), 'error');
+        return;
+    }
+    
+    // All validations passed
+    const originalText = registerBtn.innerHTML;
+    registerBtn.innerHTML = '<span class="spinner"></span> Creating Account...';
+    registerBtn.disabled = true;
+    
+    try {
+        // Prepare student data
+        const studentData = {
+            name: fullNameInput.value.trim(),
+            phone: '+237 ' + phoneInput.value.replace(/\s/g, ''),
+            matricule: matriculeInput.value.trim().toUpperCase(),
+            faculty: facultySelect.value,
+            year: yearSelect.value,
+            email: emailInput.value.trim(),
+            password: passwordInput.value,
+            department: facultySelect.value, // Using faculty as department
+            subscribe_newsletter: newsletter.checked
+        };
+        
+        // Send to Laravel API
+        const response = await API.post('/students/register', studentData);
+        
+        // Show success message
+        showAlert('Student account created successfully! Redirecting to login...', 'success');
+        
+        // Reset form
+        signupForm.reset();
+        strengthFill.style.width = '0%';
+        strengthText.textContent = 'Very weak';
+        updateRequirementIndicators('');
+        
+        // Reset to step 1
+        showStep(1);
+        
+        // Redirect to login after delay
+        setTimeout(() => {
+            registerBtn.innerHTML = originalText;
+            registerBtn.disabled = false;
+            window.location.href = 'slogin.html';
+        }, 2000);
+        
+    } catch (error) {
+        showAlert(error.message || 'Registration failed. Please try again.', 'error');
+        registerBtn.innerHTML = originalText;
+        registerBtn.disabled = false;
+    }
 });
-</script>
 
+// Update matricule validation
+function isMatriculeAvailable(matricule) {
+    // This will now be validated on the backend
+    return true; // Frontend assumes available, backend will check
+}
+
+matriculeInput.addEventListener('blur', async function() {
+    const value = this.value.trim();
+    if (value && value.length >= 5) {
+        try {
+            const response = await API.get(`/students/check-matricule/${value}`);
+            if (!response.available) {
+                this.classList.add('is-invalid');
+                showAlert('This matricule is already registered', 'error');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        } catch (error) {
+            console.error('Error checking matricule:', error);
+        }
+    }
+});
+            
+            emailInput.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (value && !isValidEmail(value)) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+            
+            confirmPasswordInput.addEventListener('input', function() {
+                if (this.value && passwordInput.value && this.value !== passwordInput.value) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+            
+            // Auto-format phone number on load
+            phoneInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = '6';
+                }
+            });
+            
+            // Initialize password strength
+            updatePasswordStrength();
+            
+            // Initialize form
+            showStep(1);
+            
+            // Welcome message in console
+            console.log("%c🎓 CATUC Student Registration Portal", "color: #004aad; font-size: 16px; font-weight: bold;");
+            console.log("%cYour voice matters! Register to vote in upcoming elections.", "color: #2196f3;");
+        });
+    </script>
+</body>
 </html>

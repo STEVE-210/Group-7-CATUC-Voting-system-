@@ -1,100 +1,703 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Login - CATUC VoteSmart</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #004aad;
+            --secondary-blue: #0066cc;
+            --light-blue: #e6f0ff;
+            --accent-gold: #ffd700;
+            --error-red: #dc3545;
+            --success-green: #28a745;
+            --gradient-primary: linear-gradient(135deg, #004aad 0%, #0066cc 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            --shadow-soft: 0 8px 30px rgba(0, 74, 173, 0.08);
+            --shadow-hard: 0 10px 40px rgba(0, 74, 173, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background-color: #e6f0ff;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e6f0ff 0%, #f0f7ff 50%, #e6f0ff 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
-        .card {
-            border-radius: 12px;
-            padding: 30px;
-            background-color: white;
-            border: 2px solid #004aad;
+        
+        /* Background Pattern */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 74, 173, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 102, 204, 0.1) 0%, transparent 20%);
         }
-        h2 {
-            color: #004aad;
+        
+        /* Header Styles */
+        header {
+            background: var(--gradient-primary);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0, 74, 173, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid var(--accent-gold);
         }
-        .signup-text {
-            margin-top: 10px;
-            font-size: 14px;
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        .signup-text a {
-            color: #004aad;
-            font-weight: bold;
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             text-decoration: none;
         }
-        header {
-    background-color: #004aad; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-}
-
-.logo-left, .logo-right {
-    height: 60px;
-}
-
-header h1 {
-    color: white;
-    font-size: 22px;
-    text-align: center;
-    margin: 0;
-    flex-grow: 1;
-}
-
+        
+        .logo-img {
+            height: 65px;
+            width: 65px;
+            object-fit: contain;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 300;
+            margin-top: -2px;
+        }
+        
+        /* Main Content */
+        .main-container {
+            min-height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        /* Admin Login Card */
+        .admin-card {
+            background: var(--gradient-card);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow-hard);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .admin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-gold), var(--primary-blue));
+        }
+        
+        .admin-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 74, 173, 0.25);
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            background: rgba(0, 74, 173, 0.1);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+        
+        .card-subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-label i {
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+        }
+        
+        .form-control {
+            padding: 14px 15px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fdfdfd;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.25rem rgba(0, 74, 173, 0.15);
+            background-color: white;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-blue);
+        }
+        
+        /* Button Styles */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            border: none;
+            letter-spacing: 0.5px;
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 74, 173, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login:hover {
+            background: linear-gradient(135deg, #003c8f 0%, #0055aa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 74, 173, 0.4);
+            color: white;
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-login i {
+            margin-right: 10px;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border: 2px solid var(--error-red);
+            color: var(--error-red);
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 2px solid var(--success-green);
+            color: var(--success-green);
+        }
+        
+        /* Footer Links */
+        .card-footer {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .footer-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+            margin: 0 15px;
+        }
+        
+        .footer-link:hover {
+            color: #003c8f;
+            text-decoration: underline;
+        }
+        
+        .signup-text {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #6c757d;
+        }
+        
+        .signup-text a {
+            color: var(--primary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .signup-text a:hover {
+            color: #003c8f;
+            text-decoration: underline;
+        }
+        
+        /* Security Notice */
+        .security-notice {
+            background: rgba(0, 74, 173, 0.05);
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .security-notice i {
+            color: var(--primary-blue);
+            margin-right: 10px;
+        }
+        
+        /* Loading Animation */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .admin-card {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .card-title {
+                font-size: 1.7rem;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        /* Shake animation for errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
     </style>
 </head>
 <body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+    
+    <!-- Header -->
     <header>
-        <img src="logo.png.jpg" class="logo-left">
-        <h1>🗳️ CATUC VoteSmart</h1>
-        <img src="logo.png.jpg" class="logo-right">
+        <div class="header-container">
+            <a href="index.html" class="logo-container">
+                <img src="logo.png.jpg" alt="CATUC Logo" class="logo-img">
+                <div class="logo-text">
+                    <h1 class="logo-title">CATUC VoteSmart</h1>
+                    <p class="logo-subtitle">Administrator Portal</p>
+                </div>
+            </a>
+        </div>
     </header>
-</body>
-<div class="d-flex justify-content-center align-items-center vh-100">
-
-    <div class="card" style="width: 350px;">
-        <h2>Admin Login</h2>
-        <form>
-            <label>Admin ID</label>
-            <input type="text" class="form-control mb-2" placeholder="Enter Admin ID">
-
-            <label>Password</label>
-            <input type="password" class="form-control mb-3" placeholder="Enter password">
-
-            <button type="submit" class="btn btn-secondary w-100">Login</button>
-        </form>
-
-        <p class="signup-text">
-            Don’t have an account? <a href="admin_signup.html">Sign up</a>
-        </p>
-
-        <a href="admin.html" class="btn btn-link mt-2">Back</a>
-    </div>
-    </div>
-
-</body>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const loginForm = document.querySelector("form");
-
-    loginForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        let adminID = document.querySelector("input[placeholder='Enter Admin ID']").value;
-        let password = document.querySelector("input[placeholder='Enter password']").value;
-
-        if (adminID === "" || password === "") {
-            alert("Please fill in all fields.");
-        } else {
-            alert("Admin login successful!");
-            window.location.href = "admin_dashboard.html";
-        }
-    });
+    
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="admin-card animate-fade-in">
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+            
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h2 class="card-title">Admin Login</h2>
+                <p class="card-subtitle">Secure access to election management system</p>
+            </div>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-id-card"></i>
+                        Admin ID
+                    </label>
+                    <div class="input-group">
+                        <input type="text" 
+                               id="adminID" 
+                               class="form-control" 
+                               placeholder="Enter your Admin ID"
+                               required
+                               autocomplete="username">
+                        <i class="fas fa-user-tie input-icon"></i>
+                    </div>
+                    <small class="form-text text-muted">Use your assigned administrator credentials</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-key"></i>
+                        Password
+                    </label>
+                    <div class="input-group">
+                        <input type="password" 
+                               id="password" 
+                               class="form-control" 
+                               placeholder="Enter your password"
+                               required
+                               autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="form-text text-muted">Case-sensitive password</small>
+                </div>
+                
+                <button type="submit" class="btn btn-login" id="loginButton">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login to Dashboard
+                </button>
+            </form>
+            
+            <!-- Security Notice -->
+            <div class="security-notice">
+                <i class="fas fa-shield-alt"></i>
+                <strong>Security Notice:</strong> This portal is protected. All login attempts are logged and monitored.
+            </div>
+            
+            <!-- Footer Links -->
+            <div class="card-footer">
+                <a href="admin.html" class="footer-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // DOM Elements
+            const loginForm = document.getElementById('adminLoginForm');
+            const adminIDInput = document.getElementById('adminID');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const loginButton = document.getElementById('loginButton');
+            const alertContainer = document.getElementById('alertContainer');
+            const rememberMeCheckbox = document.getElementById('rememberMe');
+            
+           
+            if (savedAdminID && savedPassword) {
+                adminIDInput.value = savedAdminID;
+                passwordInput.value = savedPassword;
+            }
+            
+            // Toggle password visibility
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            // Show alert function
+            function showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.innerHTML = `
+                    <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close float-end" onclick="this.parentElement.style.display='none'"></button>
+                `;
+                
+                alertContainer.innerHTML = '';
+                alertContainer.appendChild(alertDiv);
+                alertDiv.style.display = 'block';
+                
+                // Auto-remove success alerts after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        alertDiv.style.opacity = '0';
+                        alertDiv.style.transition = 'opacity 0.5s';
+                        setTimeout(() => alertDiv.remove(), 500);
+                    }, 5000);
+                }
+            }
+            
+            // Validate admin credentials
+            function validateAdminCredentials(adminID, password) {
+                // Define valid admin credentials
+                const validAdmins = [
+                    { id: 'admin001', password: 'Catuc@2026', name: 'System Administrator', role: 'superadmin' },
+                    { id: 'superadmin', password: 'SecureVote@2026', name: 'Super Administrator', role: 'superadmin' },
+                    { id: 'election2026', password: 'Admin@CATUC', name: 'Election Coordinator', role: 'admin' },
+                    { id: 'admin', password: 'password123', name: 'Test Administrator', role: 'admin' }
+                ];
+                
+                return validAdmins.find(admin => 
+                    admin.id === adminID && admin.password === password
+                );
+            }
+            
+            // Handle form submission
+          // Handle form submission
+loginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const adminID = adminIDInput.value.trim();
+    const password = passwordInput.value;
+    
+    // Basic validation
+    if (!adminID || !password) {
+        showAlert('Please fill in all required fields.', 'error');
+        adminIDInput.focus();
+        return;
+    }
+    
+    // Show loading state
+    const originalText = loginButton.innerHTML;
+    loginButton.innerHTML = '<span class="spinner"></span> Authenticating...';
+    loginButton.disabled = true;
+    
+    try {
+        // Send login request to Laravel
+        const response = await API.post('/admin/login', {
+            admin_id: adminID,
+            password: password
+        });
+        
+        // Store auth token and user data
+        Auth.setToken(response.token);
+        Auth.setUser(response.user);
+        
+        showAlert('Login successful! Redirecting to dashboard...', 'success');
+        
+        // Reset button state
+        loginButton.innerHTML = originalText;
+        loginButton.disabled = false;
+        
+        // Redirect to admin dashboard
+        setTimeout(() => {
+            window.location.href = 'admin_dashboard.html';
+        }, 1500);
+        
+    } catch (error) {
+        // Failed login
+        showAlert(error.message || 'Invalid Admin ID or password. Please try again.', 'error');
+        
+        // Shake animation for error
+        loginForm.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+            loginForm.style.animation = '';
+        }, 500);
+        
+        // Clear password field
+        passwordInput.value = '';
+        passwordInput.focus();
+        
+        // Restore button
+        loginButton.innerHTML = originalText;
+        loginButton.disabled = false;
+    }
 });
-</script>
-
+            // Auto-focus on admin ID field
+            adminIDInput.focus();
+            
+            // Add input validation on blur
+            adminIDInput.addEventListener('blur', function() {
+                if (this.value && this.value.length < 4) {
+                    this.style.borderColor = 'var(--error-red)';
+                } else {
+                    this.style.borderColor = '';
+                }
+            });
+            
+            passwordInput.addEventListener('blur', function() {
+                if (this.value && this.value.length < 8) {
+                    this.style.borderColor = 'var(--error-red)';
+                } else {
+                    this.style.borderColor = '';
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + / to focus on password field
+                if (e.ctrlKey && e.key === '/') {
+                    e.preventDefault();
+                    passwordInput.focus();
+                }
+                
+                // Escape to clear form
+                if (e.key === 'Escape') {
+                    if (confirm('Clear all form fields?')) {
+                        loginForm.reset();
+                        adminIDInput.focus();
+                    }
+                }
+                
+                // Enter key to submit form (already handled by form submit)
+                if (e.key === 'Enter' && !loginButton.disabled) {
+                    // Form submission is already handled by the submit event
+                }
+            });
+            
+            // Welcome message in console
+            console.log("%c🔐 CATUC Admin Login Portal", "color: #004aad; font-size: 16px; font-weight: bold;");
+            console.log("%cAuthorized personnel only. All access is monitored.", "color: #dc3545;");
+            
+            // Test credentials reminder
+            console.log("%cTest Credentials:", "color: #28a745; font-weight: bold;");
+            console.log("%c• admin001 / Catuc@2026", "color: #6c757d;");
+            console.log("%c• superadmin / SecureVote@2026", "color: #6c757d;");
+            console.log("%c• election2026 / Admin@CATUC", "color: #6c757d;");
+            console.log("%c• admin / password123", "color: #6c757d;");
+        });
+    </script>
+</body>
 </html>

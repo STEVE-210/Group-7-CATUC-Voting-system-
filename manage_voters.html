@@ -1,77 +1,1526 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manage Voters</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Manage Voters - CATUC VoteSmart</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-            
-
-        body{font-family:Arial;background:rgb(237, 239, 248);padding:30px;}
-        table{border-collapse:collapse;width:100%;margin-top:20px;}
-        td,th{border:1px solid #aaa;padding:8px;}
-        button{padding:5px 10px;border:none;background:red;color:white;border-radius:4px;}
-        h2{color:blue;}
+        :root {
+            --primary-blue: #004aad;
+            --secondary-blue: #0066cc;
+            --light-blue: #e6f0ff;
+            --accent-gold: #ffd700;
+            --success-green: #28a745;
+            --warning-orange: #ff9800;
+            --danger-red: #dc3545;
+            --gradient-primary: linear-gradient(135deg, #004aad 0%, #0066cc 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            --shadow-soft: 0 8px 30px rgba(0, 74, 173, 0.08);
+            --shadow-hard: 0 10px 40px rgba(0, 74, 173, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e6f0ff 0%, #f0f7ff 50%, #e6f0ff 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
         header {
-    background-color: #004aad; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-}
-
-.logo-left, .logo-right {
-    height: 60px;
-}
-
-header h1 {
-    color: white;
-    font-size: 22px;
-    text-align: center;
-    margin: 0;
-    flex-grow: 1;
-}
-
+            background: var(--gradient-primary);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0, 74, 173, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid var(--accent-gold);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+        
+        .logo-img {
+            height: 65px;
+            width: 65px;
+            object-fit: contain;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 300;
+            margin-top: -2px;
+        }
+        
+        /* Back Button */
+        .back-button {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .btn-back {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: #003c8f;
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 30px;
+        }
+        
+        /* Page Title */
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .page-subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hard);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 15px;
+        }
+        
+        .total-voters .stat-icon {
+            background: rgba(0, 74, 173, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        .voted .stat-icon {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-green);
+        }
+        
+        .not-voted .stat-icon {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning-orange);
+        }
+        
+        .flagged .stat-icon {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-red);
+        }
+        
+        .stat-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        /* Search and Filters */
+        .search-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+        }
+        
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.25rem rgba(0, 74, 173, 0.15);
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #6c757d;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        /* Voters Table */
+        .voters-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .table-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .voters-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .voters-table thead {
+            background: #f8f9fa;
+        }
+        
+        .voters-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-blue);
+            border-bottom: 2px solid #eaeaea;
+            white-space: nowrap;
+        }
+        
+        .voters-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            vertical-align: middle;
+        }
+        
+        .voters-table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .voters-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .voter-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .voter-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .voter-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .voter-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .voter-matricule {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-verified {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+        
+        .status-pending {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid rgba(255, 152, 0, 0.2);
+        }
+        
+        .status-flagged {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-red);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+        
+        .voting-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .voted {
+            color: var(--success-green);
+            font-weight: 500;
+        }
+        
+        .not-voted {
+            color: var(--warning-orange);
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-view {
+            background: rgba(0, 74, 173, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        .btn-view:hover {
+            background: rgba(0, 74, 173, 0.2);
+        }
+        
+        .btn-remove {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-red);
+        }
+        
+        .btn-remove:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 2px solid var(--success-green);
+            color: var(--success-green);
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border: 2px solid var(--danger-red);
+            color: var(--danger-red);
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 2px solid var(--warning-orange);
+            color: #856404;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        /* Bulk Actions */
+        .bulk-actions {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .bulk-select {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .bulk-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-bulk {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-bulk-remove {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-red);
+            border: 2px solid rgba(220, 53, 69, 0.2);
+        }
+        
+        .btn-bulk-remove:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .page-item {
+            list-style: none;
+        }
+        
+        .page-link {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #6c757d;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .page-link:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .page-link.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        /* Modal */
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom: none;
+        }
+        
+        .modal-title {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .filter-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .voters-table th, 
+            .voters-table td {
+                padding: 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .bulk-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .bulk-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
-<header>
-        <img src="logo.png.jpg" class="logo-left">
-        <h1>🗳️ CATUC VoteSmart</h1>
-        <img src="logo.png.jpg" class="logo-right">
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="admin_dashboard.html" class="logo-container">
+                <img src="logo.png.jpg" alt="CATUC Logo" class="logo-img">
+                <div class="logo-text">
+                    <h1 class="logo-title">CATUC VoteSmart</h1>
+                    <p class="logo-subtitle">Voter Management System</p>
+                </div>
+            </a>
+        </div>
     </header>
-<h2>Manage Registered Voters</h2>
-
-<table>
-    <tr>
-        <th>Matricule</th>
-        <th>Action</th>
-    </tr>
-    <tbody id="voterTable"></tbody>
-</table>
-
-<script>
-    let voters = JSON.parse(localStorage.getItem("voters")) || ["CT2021A01","CT2021A02"];
-
-    function loadVoters(){
-        let area = document.getElementById("voterTable");
-        area.innerHTML = "";
-
-        voters.forEach((v,index)=>{
-            area.innerHTML += `
-            <tr>
-                <td>${v}</td>
-                <td><button onclick='removeVoter(${index})'>Remove</button></td>
-            </tr>`;
+    
+    <!-- Back Button -->
+    <div class="back-button">
+        <a href="admin_dashboard.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+    
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+        
+        <!-- Page Header -->
+        <div class="mb-4">
+            <h1 class="page-title">
+                <i class="fas fa-users"></i>
+                Manage Voters
+            </h1>
+            <p class="page-subtitle">
+                View all registered students, monitor voting activity, and manage voter accounts to prevent fraud.
+            </p>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+            <div class="stat-card total-voters">
+                <div class="stat-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="stat-value" id="totalVotersCount">0</div>
+                <div class="stat-label">Total Registered Voters</div>
+            </div>
+            
+            <div class="stat-card voted">
+                <div class="stat-icon">
+                    <i class="fas fa-vote-yea"></i>
+                </div>
+                <div class="stat-value" id="votedCount">0</div>
+                <div class="stat-label">Votes Cast</div>
+            </div>
+            
+            <div class="stat-card not-voted">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value" id="notVotedCount">0</div>
+                <div class="stat-label">Pending Votes</div>
+            </div>
+            
+            <div class="stat-card flagged">
+                <div class="stat-icon">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <div class="stat-value" id="flaggedCount">0</div>
+                <div class="stat-label">Flagged Accounts</div>
+            </div>
+        </div>
+        
+        <!-- Search and Filters -->
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-box">
+                    <input type="text" 
+                           class="search-input" 
+                           id="searchInput" 
+                           placeholder="Search by name, matricule, department..."
+                           onkeyup="searchVoters()">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterVoters('all')">
+                        <i class="fas fa-users"></i> All Voters
+                    </button>
+                    <button class="filter-btn" onclick="filterVoters('voted')">
+                        <i class="fas fa-vote-yea"></i> Voted
+                    </button>
+                    <button class="filter-btn" onclick="filterVoters('not-voted')">
+                        <i class="fas fa-clock"></i> Not Voted
+                    </button>
+                    <button class="filter-btn" onclick="filterVoters('flagged')">
+                        <i class="fas fa-flag"></i> Flagged
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bulk-actions" style="display: none;" id="bulkActions">
+                <div class="bulk-select">
+                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                    <label for="selectAll" style="font-weight: 500; color: #2c3e50;">
+                        <span id="selectedCount">0</span> selected
+                    </label>
+                </div>
+                <div class="bulk-buttons">
+                    <button class="btn-bulk btn-bulk-remove" onclick="removeSelectedVoters()">
+                        <i class="fas fa-trash-alt"></i>
+                        Remove Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Voters Table -->
+        <div class="voters-table-container">
+            <div class="table-header">
+                <h3 class="table-title">Registered Voters List</h3>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    <i class="fas fa-info-circle"></i>
+                    Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> voters
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="voters-table" id="votersTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="checkAll" onchange="toggleAllCheckboxes()">
+                            </th>
+                            <th>Student</th>
+                            <th>Matricule</th>
+                            <th>Level</th>
+                            <th>Faculty</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Voting Status</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="votersTableBody">
+                        <!-- Voters will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-user-slash"></i>
+                <h3>No Voters Found</h3>
+                <p>No students have registered yet.</p>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="pagination" style="display: none;">
+                <!-- Pagination will be generated here -->
+            </div>
+        </div>
+    </main>
+    
+    <!-- View Voter Modal -->
+    <div class="modal fade" id="viewVoterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        Voter Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="voterDetailsContent">
+                    <!-- Voter details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Remove Confirmation Modal -->
+    <div class="modal fade" id="removeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Remove Voter Account
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="removeModalContent">
+                    <!-- Confirmation message will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmRemoveBtn">
+                        Remove Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentFilter = 'all';
+        let allVoters = [];
+        let displayedVoters = [];
+        let selectedVoters = new Set();
+        const itemsPerPage = 10;
+        let currentPage = 1;
+        let totalPages = 1;
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load all registered students (voters)
+            loadAllVoters();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update stats periodically
+            setInterval(updateStats, 30000); // Every 30 seconds
         });
+        
+        // Load all voters from API
+async function loadAllVoters() {
+    try {
+        const response = await API.get('/admin/voters');
+        allVoters = response.data || [];
+        
+        // Sort by registration date (newest first)
+        allVoters.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        
+        // Initialize displayed voters
+        displayedVoters = [...allVoters];
+        
+        // Update UI
+        updateStats();
+        renderVotersTable();
+        
+    } catch (error) {
+        console.error('Error loading voters:', error);
+        showAlert('Error loading voter data. Please try again.', 'error');
     }
-
-    function removeVoter(i){
-        voters.splice(i,1);
-        localStorage.setItem("voters", JSON.stringify(voters));
-        loadVoters();
+}
+        
+        // Update statistics
+        function updateStats() {
+            const totalVoters = allVoters.length;
+            const votedCount = allVoters.filter(voter => voter.hasVoted).length;
+            const flaggedCount = allVoters.filter(voter => voter.isFlagged).length;
+            
+            document.getElementById('totalVotersCount').textContent = totalVoters;
+            document.getElementById('votedCount').textContent = votedCount;
+            document.getElementById('notVotedCount').textContent = totalVoters - votedCount;
+            document.getElementById('flaggedCount').textContent = flaggedCount;
+        }
+        
+        // Render voters table
+        function renderVotersTable() {
+            const tableBody = document.getElementById('votersTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const pagination = document.getElementById('pagination');
+            const showingCount = document.getElementById('showingCount');
+            const totalCount = document.getElementById('totalCount');
+            
+            // Update counts
+            totalCount.textContent = displayedVoters.length;
+            
+            if (displayedVoters.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.style.display = 'block';
+                pagination.style.display = 'none';
+                showingCount.textContent = '0';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Calculate pagination
+            totalPages = Math.ceil(displayedVoters.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, displayedVoters.length);
+            const pageVoters = displayedVoters.slice(startIndex, endIndex);
+            
+            showingCount.textContent = `${startIndex + 1}-${endIndex}`;
+            
+            // Generate table rows
+            let html = '';
+            
+            pageVoters.forEach((voter, index) => {
+                const globalIndex = startIndex + index;
+                const initials = voter.name ? voter.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??';
+                const registrationDate = new Date(voter.registrationDate).toLocaleDateString();
+                
+                html += `
+                    <tr data-matricule="${voter.matricule}">
+                        <td>
+                            <input type="checkbox" class="voter-checkbox" value="${voter.matricule}" 
+                                   onchange="toggleVoterSelection('${voter.matricule}', this.checked)"
+                                   ${selectedVoters.has(voter.matricule) ? 'checked' : ''}>
+                        </td>
+                        <td>
+                            <div class="voter-info">
+                                <div class="voter-avatar">${initials}</div>
+                                <div class="voter-details">
+                                    <div class="voter-name">${voter.name || 'Unknown'}</div>
+                                    <div class="voter-matricule">${voter.matricule}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${voter.matricule}</td>
+                        <td>${voter.level || 'N/A'}</td>
+                        <td>${voter.faculty || 'N/A'}</td>
+                        <td>${voter.department || 'N/A'}</td>
+                        <td>
+                            <span class="status-badge ${voter.isFlagged ? 'status-flagged' : voter.status === 'verified' ? 'status-verified' : 'status-pending'}">
+                                <i class="fas ${voter.isFlagged ? 'fa-flag' : voter.status === 'verified' ? 'fa-check-circle' : 'fa-clock'}"></i>
+                                ${voter.isFlagged ? 'Flagged' : voter.status === 'verified' ? 'Verified' : 'Pending'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="voting-status">
+                                ${voter.hasVoted ? 
+                                    '<i class="fas fa-check-circle text-success"></i><span class="voted">Voted</span>' : 
+                                    '<i class="fas fa-clock text-warning"></i><span class="not-voted">Not Voted</span>'
+                                }
+                            </div>
+                        </td>
+                        <td>${registrationDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-view" onclick="viewVoterDetails('${voter.matricule}')">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="btn-action btn-remove" onclick="showRemoveConfirmation('${voter.matricule}')">
+                                    <i class="fas fa-trash-alt"></i>
+                                    Remove
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+            
+            // Generate pagination
+            generatePagination();
+            
+            // Show/hide bulk actions
+            toggleBulkActions();
+        }
+        
+        // Generate pagination controls
+        function generatePagination() {
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            
+            let html = '';
+            
+            // Previous button
+            html += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+            `;
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <li class="page-item">
+                        <a class="page-link ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                            ${i}
+                        </a>
+                    </li>
+                `;
+            }
+            
+            // Next button
+            html += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            `;
+            
+            pagination.innerHTML = html;
+        }
+        
+        // Change page
+        function changePage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) return;
+            
+            currentPage = page;
+            renderVotersTable();
+        }
+        
+        // Filter voters
+        function filterVoters(filter) {
+            currentFilter = filter;
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Apply filter
+            switch(filter) {
+                case 'all':
+                    displayedVoters = [...allVoters];
+                    break;
+                case 'voted':
+                    displayedVoters = allVoters.filter(voter => voter.hasVoted);
+                    break;
+                case 'not-voted':
+                    displayedVoters = allVoters.filter(voter => !voter.hasVoted);
+                    break;
+                case 'flagged':
+                    displayedVoters = allVoters.filter(voter => voter.isFlagged);
+                    break;
+            }
+            
+            // Reset to first page
+            currentPage = 1;
+            selectedVoters.clear();
+            
+            // Re-render table
+            renderVotersTable();
+        }
+        
+        // Search voters
+        function searchVoters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!searchTerm) {
+                displayedVoters = [...allVoters];
+            } else {
+                displayedVoters = allVoters.filter(voter => 
+                    (voter.name && voter.name.toLowerCase().includes(searchTerm)) ||
+                    (voter.matricule && voter.matricule.toLowerCase().includes(searchTerm)) ||
+                    (voter.department && voter.department.toLowerCase().includes(searchTerm)) ||
+                    (voter.faculty && voter.faculty.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Reset to first page
+            currentPage = 1;
+            selectedVoters.clear();
+            
+            // Re-render table
+            renderVotersTable();
+        }
+        
+        // Toggle all checkboxes
+        function toggleAllCheckboxes() {
+            const checkAll = document.getElementById('checkAll').checked;
+            const checkboxes = document.querySelectorAll('.voter-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checkAll;
+                const matricule = checkbox.value;
+                
+                if (checkAll) {
+                    selectedVoters.add(matricule);
+                } else {
+                    selectedVoters.delete(matricule);
+                }
+            });
+            
+            updateSelectedCount();
+            toggleBulkActions();
+        }
+        
+        // Toggle voter selection
+        function toggleVoterSelection(matricule, isSelected) {
+            if (isSelected) {
+                selectedVoters.add(matricule);
+            } else {
+                selectedVoters.delete(matricule);
+                document.getElementById('checkAll').checked = false;
+            }
+            
+            updateSelectedCount();
+            toggleBulkActions();
+        }
+        
+        // Update selected count
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = selectedVoters.size;
+        }
+        
+        // Toggle bulk actions visibility
+        function toggleBulkActions() {
+            const bulkActions = document.getElementById('bulkActions');
+            
+            if (selectedVoters.size > 0) {
+                bulkActions.style.display = 'flex';
+            } else {
+                bulkActions.style.display = 'none';
+                document.getElementById('checkAll').checked = false;
+            }
+        }
+        
+        // Remove selected voters
+        function removeSelectedVoters() {
+            if (selectedVoters.size === 0) return;
+            
+            const votersToRemove = Array.from(selectedVoters);
+            const voterNames = votersToRemove.map(matricule => {
+                const voter = allVoters.find(v => v.matricule === matricule);
+                return voter ? voter.name : matricule;
+            }).join(', ');
+            
+            const modalContent = document.getElementById('removeModalContent');
+            modalContent.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone.
+                </div>
+                <p>Are you sure you want to remove the following voter account(s)?</p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0; max-height: 200px; overflow-y: auto;">
+                    <strong>Accounts to remove (${selectedVoters.size}):</strong><br>
+                    ${voterNames}
+                </div>
+                <p><small>Removing accounts will:</small></p>
+                <ul style="color: #6c757d; font-size: 0.9rem;">
+                    <li>Delete student registration data</li>
+                    <li>Prevent them from voting</li>
+                    <li>Remove their voting record if they've already voted</li>
+                    <li>Flag their matricule to prevent re-registration</li>
+                </ul>
+            `;
+            
+            // Set up confirmation button
+            document.getElementById('confirmRemoveBtn').onclick = function() {
+                removeVoters(votersToRemove);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('removeModal'));
+                modal.hide();
+            };
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('removeModal'));
+            modal.show();
+        }
+        
+        // Remove voter
+async function removeVoter(matricule, reason, notes, preventReRegistration) {
+    try {
+        await API.delete(`/admin/voters/${matricule}`, {
+            reason: reason,
+            notes: notes,
+            prevent_re_registration: preventReRegistration
+        });
+        
+        // Remove from local arrays
+        allVoters = allVoters.filter(voter => voter.matricule !== matricule);
+        displayedVoters = displayedVoters.filter(voter => voter.matricule !== matricule);
+        
+        // Update UI
+        updateStats();
+        renderVotersTable();
+        
+        showAlert('Voter account removed successfully', 'success');
+        
+    } catch (error) {
+        showAlert(error.message || 'Error removing voter. Please try again.', 'error');
     }
-
-    loadVoters();
-</script>
-
+}
+        
+        // View voter details
+        function viewVoterDetails(matricule) {
+            const voter = allVoters.find(v => v.matricule === matricule);
+            
+            if (!voter) {
+                showAlert('Voter not found', 'error');
+                return;
+            }
+            
+            // Get voting record if they voted
+            const votes = JSON.parse(localStorage.getItem('catuc_votes')) || [];
+            const voterVote = votes.find(vote => vote.voterMatricule === matricule);
+            
+            const content = document.getElementById('voterDetailsContent');
+            content.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="voter-avatar" style="width: 80px; height: 80px; margin: 0 auto 15px; font-size: 1.5rem;">
+                            ${voter.name ? voter.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??'}
+                        </div>
+                        <h4>${voter.name || 'Unknown'}</h4>
+                        <p class="text-muted">${voter.matricule}</p>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <h5><i class="fas fa-info-circle me-2"></i>Student Information</h5>
+                            <div class="row mt-3">
+                                <div class="col-md-6 mb-2">
+                                    <strong>Level:</strong> ${voter.level || 'N/A'}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Faculty:</strong> ${voter.faculty || 'N/A'}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Department:</strong> ${voter.department || 'N/A'}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Registration Date:</strong> ${new Date(voter.registrationDate).toLocaleDateString()}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h5><i class="fas fa-vote-yea me-2"></i>Voting Status</h5>
+                            <div class="mt-3">
+                                ${voter.hasVoted ? 
+                                    `<div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Vote Cast</strong> - This student has voted in the election
+                                        ${voterVote ? `<br><small>Voted on: ${new Date(voterVote.timestamp).toLocaleString()}</small>` : ''}
+                                    </div>` :
+                                    `<div class="alert alert-warning">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <strong>Not Voted</strong> - This student has not cast their vote yet
+                                    </div>`
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h5><i class="fas fa-shield-alt me-2"></i>Account Status</h5>
+                            <div class="mt-3">
+                                ${voter.isFlagged ? 
+                                    `<div class="alert alert-danger">
+                                        <i class="fas fa-flag me-2"></i>
+                                        <strong>Account Flagged</strong> - This account has been flagged for review
+                                    </div>` :
+                                    `<div class="alert alert-info">
+                                        <i class="fas ${voter.status === 'verified' ? 'fa-check-circle' : 'fa-clock'} me-2"></i>
+                                        <strong>Account ${voter.status === 'verified' ? 'Verified' : 'Pending Verification'}</strong>
+                                    </div>`
+                                }
+                            </div>
+                        </div>
+                        
+                        ${voterVote ? `
+                            <div class="mb-3">
+                                <h5><i class="fas fa-list-check me-2"></i>Voting Choices</h5>
+                                <div class="mt-3" style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                    ${Object.entries(voterVote.selections || {}).map(([position, candidate]) => `
+                                        <div class="mb-2">
+                                            <strong>${position}:</strong> ${candidate.candidateName}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('viewVoterModal'));
+            modal.show();
+        }
+        
+        // Show remove confirmation for single voter
+        function showRemoveConfirmation(matricule) {
+            const voter = allVoters.find(v => v.matricule === matricule);
+            
+            if (!voter) {
+                showAlert('Voter not found', 'error');
+                return;
+            }
+            
+            const modalContent = document.getElementById('removeModalContent');
+            modalContent.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone.
+                </div>
+                <p>Are you sure you want to remove this voter account?</p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                    <strong>Account to remove:</strong><br>
+                    ${voter.name} (${voter.matricule})<br>
+                    <small>${voter.department || ''} - ${voter.level || ''}</small>
+                </div>
+                <p><strong>Reason for removal:</strong></p>
+                <div class="mb-3">
+                    <select class="form-select" id="removalReason">
+                        <option value="Duplicate Account">Duplicate Account</option>
+                        <option value="Fraudulent Registration">Fraudulent Registration</option>
+                        <option value="Incorrect Information">Incorrect Information</option>
+                        <option value="Violation of Rules">Violation of Rules</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <textarea class="form-control mt-2" id="removalNotes" rows="2" placeholder="Additional notes..." style="display: none;"></textarea>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="preventReRegistration">
+                    <label class="form-check-label" for="preventReRegistration">
+                        Prevent re-registration with this matricule
+                    </label>
+                </div>
+            `;
+            
+            // Show notes field if "Other" is selected
+            document.getElementById('removalReason').addEventListener('change', function() {
+                const notesField = document.getElementById('removalNotes');
+                notesField.style.display = this.value === 'Other' ? 'block' : 'none';
+            });
+            
+            // Set up confirmation button
+            document.getElementById('confirmRemoveBtn').onclick = function() {
+                const reason = document.getElementById('removalReason').value;
+                const notes = document.getElementById('removalNotes').value;
+                const preventReRegistration = document.getElementById('preventReRegistration').checked;
+                
+                removeVoter(matricule, reason, notes, preventReRegistration);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('removeModal'));
+                modal.hide();
+            };
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('removeModal'));
+            modal.show();
+        }
+        
+        // Remove single voter
+        function removeVoter(matricule, reason, notes, preventReRegistration) {
+            // Remove from allVoters
+            const voterIndex = allVoters.findIndex(v => v.matricule === matricule);
+            if (voterIndex === -1) {
+                showAlert('Voter not found', 'error');
+                return;
+            }
+            
+            const voter = allVoters[voterIndex];
+            allVoters.splice(voterIndex, 1);
+            
+            // Remove from displayedVoters
+            const displayedIndex = displayedVoters.findIndex(v => v.matricule === matricule);
+            if (displayedIndex !== -1) {
+                displayedVoters.splice(displayedIndex, 1);
+            }
+            
+            // Remove from localStorage (students data)
+            const students = JSON.parse(localStorage.getItem('catuc_students')) || [];
+            const updatedStudents = students.filter(student => student.matricule !== matricule);
+            localStorage.setItem('catuc_students', JSON.stringify(updatedStudents));
+            
+            // Remove their vote if they voted
+            const votes = JSON.parse(localStorage.getItem('catuc_votes')) || [];
+            const updatedVotes = votes.filter(vote => vote.voterMatricule !== matricule);
+            localStorage.setItem('catuc_votes', JSON.stringify(updatedVotes));
+            
+            // Remove their voting flag
+            localStorage.removeItem(`catuc_voted_${matricule}`);
+            
+            // Add to flagged accounts if requested
+            if (preventReRegistration) {
+                const flaggedAccounts = JSON.parse(localStorage.getItem('catuc_flagged_accounts')) || [];
+                if (!flaggedAccounts.find(acc => acc.matricule === matricule)) {
+                    flaggedAccounts.push({
+                        matricule: matricule,
+                        reason: reason,
+                        notes: notes,
+                        removedBy: 'Admin',
+                        removedDate: new Date().toISOString(),
+                        originalData: voter
+                    });
+                }
+                localStorage.setItem('catuc_flagged_accounts', JSON.stringify(flaggedAccounts));
+            }
+            
+            // Update UI
+            updateStats();
+            renderVotersTable();
+            
+            // Show success message
+            showAlert(`Voter account "${voter.name}" removed successfully`, 'success');
+            
+            // Log removal
+            console.log('Voter removed:', { matricule, reason, notes });
+        }
+        
+        // Show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                                type === 'warning' ? 'fa-exclamation-triangle' : 
+                                'fa-exclamation-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close float-end" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            alertContainer.appendChild(alertDiv);
+            alertDiv.style.display = 'block';
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input with debounce
+            let searchTimeout;
+            document.getElementById('searchInput').addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(searchVoters, 300);
+            });
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + F to focus search
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            
+            // Escape to clear search
+            if (e.key === 'Escape') {
+                document.getElementById('searchInput').value = '';
+                searchVoters();
+            }
+            
+            // Ctrl + A to select all
+            if (e.ctrlKey && e.key === 'a') {
+                e.preventDefault();
+                document.getElementById('checkAll').checked = true;
+                toggleAllCheckboxes();
+            }
+        });
+    </script>
 </body>
 </html>

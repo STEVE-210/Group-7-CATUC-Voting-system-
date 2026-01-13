@@ -1,125 +1,810 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CATUC VoteSmart - Voting Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Vote - CATUC VoteSmart</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body{font-family:Arial;background:#e9f3ff;margin:0;padding:0;}
-        .container{width:400px;margin:auto;margin-top:80px;background:white;padding:20px;border-radius:6px;}
-        button{width:100%;padding:10px;margin-top:15px;background:blue;color:white;border:none;border-radius:5px;}
-        h2{text-align:center;color:blue;}
-        label{display:block;margin-top:10px;}
+        :root {
+            --primary-blue: #004aad;
+            --secondary-blue: #0066cc;
+            --light-blue: #e6f0ff;
+            --accent-gold: #ffd700;
+            --success-green: #28a745;
+            --warning-orange: #ff9800;
+            --danger-red: #dc3545;
+            --gradient-primary: linear-gradient(135deg, #004aad 0%, #0066cc 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            --shadow-soft: 0 8px 30px rgba(0, 74, 173, 0.08);
+            --shadow-hard: 0 10px 40px rgba(0, 74, 173, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e6f0ff 0%, #f0f7ff 50%, #e6f0ff 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
         header {
-    background-color: #004aad; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-}
-
-.logo-left, .logo-right {
-    height: 60px;
-}
-
-header h1 {
-    color: white;
-    font-size: 22px;
-    text-align: center;
-    margin: 0;
-    flex-grow: 1;
-}
-
+            background: var(--gradient-primary);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0, 74, 173, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid var(--accent-gold);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+        
+        .logo-img {
+            height: 65px;
+            width: 65px;
+            object-fit: contain;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 300;
+            margin-top: -2px;
+        }
+        
+        /* Voter Info */
+        .voter-info {
+            text-align: right;
+            color: white;
+        }
+        
+        .voter-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+        
+        .voter-matricule {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* Voting Instructions */
+        .instructions-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-blue);
+        }
+        
+        .instructions-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .instructions-list li {
+            padding: 10px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            color: #5a6c7d;
+        }
+        
+        .instructions-list li i {
+            color: var(--primary-blue);
+            margin-top: 3px;
+        }
+        
+        /* Voting Positions */
+        .positions-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+        }
+        
+        .position-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #eaeaea;
+            transition: all 0.3s ease;
+        }
+        
+        .position-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .position-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 74, 173, 0.1);
+        }
+        
+        /* Candidates Grid */
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .candidate-option {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .candidate-option:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft);
+        }
+        
+        .candidate-option.selected {
+            border-color: var(--success-green);
+            background: rgba(40, 167, 69, 0.05);
+        }
+        
+        .candidate-option input[type="radio"] {
+            display: none;
+        }
+        
+        .selection-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .candidate-option.selected .selection-indicator {
+            background: var(--success-green);
+            border-color: var(--success-green);
+        }
+        
+        .candidate-option.selected .selection-indicator::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .candidate-photo {
+            width: 150px;
+            height: 200px; /* Portrait aspect ratio */
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 3px solid var(--primary-blue);
+            display: block;
+            border-radius: 10px;
+        }
+        
+        .candidate-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .candidate-info {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .manifesto-preview {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #5a6c7d;
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Vote Button */
+        .vote-actions {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .btn-vote {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 8px 25px rgba(0, 74, 173, 0.3);
+        }
+        
+        .btn-vote:hover:not(:disabled) {
+            background: linear-gradient(135deg, #003c8f 0%, #0055aa 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 74, 173, 0.4);
+        }
+        
+        .btn-vote:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 2px solid var(--success-green);
+            color: var(--success-green);
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border: 2px solid var(--danger-red);
+            color: var(--danger-red);
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 2px solid var(--warning-orange);
+            color: #856404;
+        }
+        
+        /* No Candidates Message */
+        .no-candidates {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .no-candidates i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        /* Progress Indicator */
+        .progress-indicator {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .progress-text {
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        /* Back Button */
+        .back-button {
+            margin-bottom: 20px;
+        }
+        
+        .btn-back {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back:hover {
+            background: #003c8f;
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .candidates-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-vote {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .voter-info {
+                text-align: center;
+            }
+            
+            .candidate-photo {
+                width: 120px;
+                height: 160px;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-<header>
-        <img src="logo.png.jpg" class="logo-left">
-        <h1>🗳️ CATUC VoteSmart</h1>
-        <img src="logo.png.jpg" class="logo-right">
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="student_dashboard.html" class="logo-container">
+                <img src="logo.png.jpg" alt="CATUC Logo" class="logo-img">
+                <div class="logo-text">
+                    <h1 class="logo-title">CATUC VoteSmart</h1>
+                    <p class="logo-subtitle">Voting Booth</p>
+                </div>
+            </a>
+            <div class="voter-info">
+                <div class="voter-name" id="currentVoterName">Loading...</div>
+                <div class="voter-matricule" id="currentVoterMatricule">Loading...</div>
+            </div>
+        </div>
     </header>
-
-<div class="container">
-
-   <h2>Vote for: <span id="campaignTitle"></span></h2>
-<div id="candidateList"></div>
-
-<button onclick="submitVote()">Submit Vote</button>
-
-    <p id="msg" style="color:green;font-weight:600;"></p>
-</div>
-
-<script>
-    let currentStudent = localStorage.getItem("currentStudent");
-
-let voters = JSON.parse(localStorage.getItem("voters")) || [];
-let candidates = JSON.parse(localStorage.getItem("candidates")) || [];
-
-let thisStudent = voters.find(v => v.matricule === currentStudent);
-let studentCampaign = thisStudent.campaign;
-
-document.getElementById("campaignTitle").innerHTML = studentCampaign;
-
-let filteredCandidates = candidates.filter(c => c.campaign === studentCampaign);
-
-let html = "";
-
-filteredCandidates.forEach(c => {
-    html += `
-    <div style="border:1px solid #004aad; margin:8px; padding:7px;">
-        <img src="${c.photo}" height="60"><br>
-        <strong>${c.name}</strong><br>
-        ${c.department}<br>
-        <input type="radio" name="vote" value="${c.name}">
+    
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Back Button -->
+        <div class="back-button">
+            <a href="student_dashboard.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+        
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+        
+        <!-- Instructions -->
+        <div class="instructions-card animate-fade-in">
+            <h2 class="instructions-title">
+                <i class="fas fa-vote-yea"></i>
+                Cast Your Vote
+            </h2>
+            <ul class="instructions-list">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Select one candidate for each position</strong> - You must vote for every position listed below
+                </li>
+                <li>
+                    <i class="fas fa-shield-alt"></i>
+                    <strong>Your vote is secure and anonymous</strong> - No one can see who you voted for
+                </li>
+                <li>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>You can only vote once</strong> - After submitting, you cannot change your vote
+                </li>
+                <li>
+                    <i class="fas fa-clock"></i>
+                    <strong>Take your time</strong> - Review candidate profiles before making your decision
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Voting Positions -->
+        <div id="votingPositions" class="positions-container animate-fade-in">
+            <!-- Positions and candidates will be loaded here -->
+        </div>
+        
+        <!-- Vote Button -->
+        <div class="vote-actions">
+            <button class="btn-vote" onclick="submitVote()" id="submitVoteBtn">
+                <i class="fas fa-paper-plane"></i>
+                Submit Your Vote
+            </button>
+        </div>
+    </main>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        Confirm Your Vote
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="confirmationContent">
+                    <!-- Confirmation details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-edit"></i>
+                        Review Vote
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="finalizeVote()">
+                        <i class="fas fa-check"></i>
+                        Confirm & Submit
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    `;
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    // Check authentication
+    if (!Auth.isAuthenticated() || !Auth.isStudent()) {
+        showAlert('Please login to vote', 'error');
+        setTimeout(() => {
+            window.location.href = 'slogin.html';
+        }, 2000);
+        return;
+    }
+    
+    // Get current student
+    const student = Auth.getUser();
+    
+    // Display voter information
+    document.getElementById('currentVoterName').textContent = student.name || "Student";
+    document.getElementById('currentVoterMatricule').textContent = student.matricule || "CATUC000000";
+    
+    // Check voting eligibility
+    checkVotingEligibility(student.matricule);
+    
+    // Load candidates for voting
+    loadCandidatesForVoting();
 });
-document.getElementById("candidateList").innerHTML = html;
 
-function submitVote(){
-    let currentStudent = localStorage.getItem("currentStudent");
-    let votedStudents = JSON.parse(localStorage.getItem("votedStudents")) || [];
-
-    // ❗ CHECK if student has already voted
-    if(votedStudents.includes(currentStudent)){
-        alert("❗ You have already voted! Multiple voting is not allowed.");
-        return;
+// Check voting eligibility
+async function checkVotingEligibility(matricule) {
+    try {
+        // Check verification status
+        const statusResponse = await API.get(`/students/${matricule}/status`);
+        
+        if (statusResponse.verification_status !== 'verified') {
+            showAlert('Your account needs to be verified before you can vote. Please wait for verification.', 'warning');
+            disableVoting();
+            return;
+        }
+        
+        if (statusResponse.has_voted) {
+            showAlert('You have already cast your vote. Each student can only vote once.', 'warning');
+            disableVoting();
+            return;
+        }
+        
+        // Check voting schedule
+        const scheduleResponse = await API.get('/election/schedule');
+        const schedule = scheduleResponse.schedule;
+        const now = new Date();
+        const votingStart = new Date(schedule.voting_start);
+        const votingEnd = new Date(schedule.voting_end);
+        
+        if (now < votingStart) {
+            const startDate = votingStart.toLocaleDateString();
+            const startTime = votingStart.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            showAlert(`Voting has not started yet. Voting begins on ${startDate} at ${startTime}`, 'warning');
+            disableVoting();
+            return;
+        }
+        
+        if (now > votingEnd) {
+            const endDate = votingEnd.toLocaleDateString();
+            const endTime = votingEnd.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            showAlert(`Voting has ended. The voting period closed on ${endDate} at ${endTime}`, 'warning');
+            disableVoting();
+            return;
+        }
+        
+    } catch (error) {
+        console.error('Error checking eligibility:', error);
+        showAlert('Error checking voting eligibility. Please try again.', 'error');
+        disableVoting();
     }
-
-    // Check selected option
-    let selectedCandidate = document.querySelector('input[name="vote"]:checked');
-
-    if(!selectedCandidate){
-        alert("Please choose a candidate to proceed.");
-        return;
-    }
-
-    let choice = selectedCandidate.value;
-
-    // Save vote  
-    addVote(choice);
-
-    // Mark student as having voted  
-    votedStudents.push(currentStudent);
-    localStorage.setItem("votedStudents", JSON.stringify(votedStudents));
-
-    alert("Thanks for voting! Your vote has been recorded.");
-
-    window.location.href = "student_dashboard.html";
 }
 
-function addVote(candidateName){
-    let votes = JSON.parse(localStorage.getItem("votes")) || {};
-
-    if(!votes[candidateName]){
-        votes[candidateName] = 1;
-    } else {
-        votes[candidateName]++;
+// Load candidates for voting
+async function loadCandidatesForVoting() {
+    try {
+        const response = await API.get('/candidates/active');
+        const candidates = response.data || [];
+        
+        const positionsContainer = document.getElementById('votingPositions');
+        
+        if (candidates.length === 0) {
+            positionsContainer.innerHTML = `
+                <div class="no-candidates">
+                    <i class="fas fa-user-slash"></i>
+                    <h3>No Candidates Available</h3>
+                    <p>No candidates have been registered for the election yet.</p>
+                </div>
+            `;
+            document.getElementById('submitVoteBtn').disabled = true;
+            return;
+        }
+        
+        // Group candidates by position
+        const groupedCandidates = {};
+        candidates.forEach(candidate => {
+            if (!groupedCandidates[candidate.position]) {
+                groupedCandidates[candidate.position] = [];
+            }
+            groupedCandidates[candidate.position].push(candidate);
+        });
+        
+        // Generate HTML
+        let html = '';
+        const positions = Object.keys(groupedCandidates).sort();
+        
+        if (positions.length === 0) {
+            html = `
+                <div class="no-candidates">
+                    <i class="fas fa-user-slash"></i>
+                    <h3>No Active Candidates</h3>
+                    <p>There are no active candidates available for voting.</p>
+                </div>
+            `;
+            document.getElementById('submitVoteBtn').disabled = true;
+        } else {
+            // Progress indicator
+            html += `
+                <div class="progress-indicator">
+                    <div class="progress-text">
+                        <i class="fas fa-tasks"></i>
+                        Select one candidate for each position (${positions.length} positions)
+                    </div>
+                </div>
+            `;
+            
+            positions.forEach((position, index) => {
+                const positionCandidates = groupedCandidates[position];
+                
+                html += `
+                    <div class="position-card">
+                        <h3 class="position-title">
+                            <i class="fas fa-user-tie"></i>
+                            ${position}
+                            <span style="font-size: 0.9rem; color: #6c757d; margin-left: auto;">
+                                ${positionCandidates.length} candidate${positionCandidates.length !== 1 ? 's' : ''}
+                            </span>
+                        </h3>
+                        
+                        <div class="candidates-grid">
+                `;
+                
+                positionCandidates.forEach(candidate => {
+                    html += `
+                        <label class="candidate-option" data-position="${position}" onclick="selectCandidate(this, '${candidate.id}')">
+                            <input type="radio" name="${position}" value="${candidate.id}">
+                            <div class="selection-indicator"></div>
+                            <img src="${candidate.photo_url || 'https://via.placeholder.com/150?text=No+Photo'}" 
+                                 alt="${candidate.name}" 
+                                 class="candidate-photo"
+                                 onerror="this.src='https://via.placeholder.com/150?text=No+Photo'">
+                            <div class="candidate-name">${candidate.name}</div>
+                            <div class="candidate-info">
+                                <i class="fas fa-graduation-cap"></i>
+                                ${candidate.level || 'Not specified'} Level
+                            </div>
+                            ${candidate.manifesto ? `
+                                <div class="manifesto-preview" title="${candidate.manifesto}">
+                                    <i class="fas fa-file-alt"></i>
+                                    ${candidate.manifesto.substring(0, 60)}${candidate.manifesto.length > 60 ? '...' : ''}
+                                </div>
+                            ` : ''}
+                        </label>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        positionsContainer.innerHTML = html;
+        
+        // Initialize progress
+        updateVotingProgress();
+        
+    } catch (error) {
+        console.error('Error loading candidates:', error);
+        positionsContainer.innerHTML = `
+            <div class="no-candidates">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Error Loading Candidates</h3>
+                <p>Unable to load candidates. Please try again later.</p>
+            </div>
+        `;
+        document.getElementById('submitVoteBtn').disabled = true;
     }
-
-    localStorage.setItem("votes", JSON.stringify(votes));
 }
 
-
-</script>
-
+// Finalize and submit vote
+async function finalizeVote() {
+    const student = Auth.getUser();
+    
+    // Collect all selections
+    const voteData = {
+        matricule: student.matricule,
+        selections: {}
+    };
+    
+    document.querySelectorAll('.position-card').forEach(position => {
+        const positionTitle = position.querySelector('.position-title').textContent
+            .split('\n')[0]
+            .replace(/\(\d+ candidates?\)/, '')
+            .trim();
+        
+        const selectedCandidate = position.querySelector('.candidate-option.selected');
+        
+        if (selectedCandidate) {
+            const radioInput = selectedCandidate.querySelector('input[type="radio"]');
+            const candidateId = radioInput ? radioInput.value : '';
+            
+            voteData.selections[positionTitle] = candidateId;
+        }
+    });
+    
+    try {
+        // Submit vote to Laravel API
+        const response = await API.post('/votes/submit', voteData);
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+        modal.hide();
+        
+        // Show success message
+        showAlert('Your vote has been successfully recorded! Thank you for participating.', 'success');
+        
+        // Disable voting
+        document.getElementById('submitVoteBtn').disabled = true;
+        document.getElementById('submitVoteBtn').innerHTML = '<i class="fas fa-check"></i> Vote Submitted';
+        
+        // Redirect to dashboard after delay
+        setTimeout(() => {
+            window.location.href = "student_dashboard.html";
+        }, 3000);
+        
+    } catch (error) {
+        showAlert(error.message || 'Error submitting vote. Please try again.', 'error');
+        
+        // Re-enable voting button
+        document.getElementById('submitVoteBtn').disabled = false;
+        document.getElementById('submitVoteBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Submit Your Vote';
+    }
+}
+    </script>
 </body>
 </html>

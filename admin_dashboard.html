@@ -1,81 +1,619 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Dashboard - CATUC VoteSmart</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #e6f0ff; margin:0; }
-
-        header {
-            background-color: #004aad; 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
+        :root {
+            --primary-blue: #004aad;
+            --secondary-blue: #0066cc;
+            --light-blue: #e6f0ff;
+            --accent-gold: #ffd700;
+            --dark-bg: #1a1a2e;
+            --sidebar-bg: #2c3e50;
+            --card-bg: #ffffff;
+            --success-green: #28a745;
+            --warning-orange: #ff9800;
+            --danger-red: #dc3545;
+            --info-cyan: #17a2b8;
+            --gradient-primary: linear-gradient(135deg, #004aad 0%, #0066cc 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hard: 0 10px 40px rgba(0, 0, 0, 0.15);
         }
-
-        .logo-left, .logo-right { height: 60px; }
-
-        header h1 {
-            color: white;
-            font-size: 22px;
-            text-align: center;
+        
+        * {
             margin: 0;
-            flex-grow: 1;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        .container-dashboard {
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--gradient-dark);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
-            margin-top: 50px;
         }
-
-        .button-box {
-            width: 300px;
-            margin: auto;
+        
+        .admin-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 3px solid var(--accent-gold);
         }
+        
+        .admin-info h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .admin-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        
+        .admin-role {
+            display: inline-block;
+            background: var(--accent-gold);
+            color: var(--primary-blue);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            padding: 0;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--accent-gold);
+        }
+        
+        .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-gold);
+        }
+        
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .logout-section {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(220, 53, 69, 0.2);
+            border: 2px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(220, 53, 69, 0.3);
+            border-color: rgba(220, 53, 69, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+        }
+        
+        .page-title h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+        
+        .page-title p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            border: 1px solid #eaeaea;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hard);
+        }
+        
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+        
+        .card-candidates::before {
+            background: var(--primary-blue);
+        }
+        
+        .card-results::before {
+            background: var(--success-green);
+        }
+        
+        .card-voters::before {
+            background: var(--warning-orange);
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .card-candidates .card-icon {
+            background: rgba(0, 74, 173, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        .card-results .card-icon {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-green);
+        }
+        
+        .card-voters .card-icon {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning-orange);
+        }
+        
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .card-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .btn-card {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-candidates {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-candidates:hover {
+            background: linear-gradient(135deg, #003c8f 0%, #0055aa 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-results {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-results:hover {
+            background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-voters {
+            background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+            color: white;
+        }
+        
+        .btn-voters:hover {
+            background: linear-gradient(135deg, #e68900 0%, #e0a800 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 45px;
+            height: 45px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 74, 173, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
     </style>
 </head>
-
 <body>
-<header>
-        <img src="logo.png.jpg" class="logo-left">
-        <h1>🗳️ Voting Corner</h1>
-        <img src="logo.png.jpg" class="logo-right">
-    </header>
-    <div class="container-dashboard">
-        <h2 style="color:#004aad;">Admin Dashboard</h2>
-        <p>Select a management task</p>
-
-        <div class="button-box">
-            <a href="add_candidates.html" class="btn btn-primary w-100 mb-3">Add Candidates</a>
-            <a href="view_results.html" class="btn btn-success w-100 mb-3">View Results</a>
-            <a href="manage_voters.html" class="btn btn-warning w-100 mb-3">Manage Voters</a>
-            <a href="admin.html" class="btn btn-danger w-100 mb-3">Logout</a>
-        </div>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="admin-info">
+                    <h3 id="adminName">Administrator</h3>
+                    <div class="admin-role">System Administrator</div>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="setActive(this)">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="add_candidates.html" class="nav-link" onclick="setActive(this)">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Manage Candidates</span>
+                    </a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="view_results.html" class="nav-link" onclick="setActive(this)">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Election Results</span>
+                    </a>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="manage_voters.html" class="nav-link" onclick="setActive(this)">
+                        <i class="fas fa-users"></i>
+                        <span>Manage Voters</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- Logout Section -->
+            <div class="logout-section">
+                <button class="btn-logout" onclick="logoutAdmin()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar animate-fade-in">
+                <div class="page-title">
+                    <h1>Admin Dashboard</h1>
+                    <p>Welcome back! Here's what's happening with your elections.</p>
+                </div>
+            </div>
+            
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="dashboard-card card-candidates animate-fade-in delay-1">
+                    <div class="card-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3 class="card-title">Manage Candidates</h3>
+                    <p class="card-description">
+                        Add, edit, or remove election candidates. Set up positions, departments, and candidate profiles.
+                    </p>
+                    <button class="btn btn-card btn-candidates" onclick="goToAddCandidate()">
+                        <i class="fas fa-plus-circle"></i>
+                        Manage Candidates
+                    </button>
+                </div>
+                
+                <div class="dashboard-card card-results animate-fade-in delay-2">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="card-title">Election Results</h3>
+                    <p class="card-description">
+                        View real-time voting results, generate reports, and analyze election data with visual charts.
+                    </p>
+                    <button class="btn btn-card btn-results" onclick="goToResults()">
+                        <i class="fas fa-chart-line"></i>
+                        View Results
+                    </button>
+                </div>
+                
+                <div class="dashboard-card card-voters animate-fade-in delay-3">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="card-title">Manage Voters</h3>
+                    <p class="card-description">
+                        Register voters, verify identities, manage voter lists, and handle voter verification processes.
+                    </p>
+                    <button class="btn btn-card btn-voters" onclick="goToManageVoters()">
+                        <i class="fas fa-user-cog"></i>
+                        Manage Voters
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Welcome Message -->
+            <div class="dashboard-card animate-fade-in">
+                <h3 class="card-title">Welcome to CATUC VoteSmart Admin Panel</h3>
+                <p class="card-description">
+                    Use the dashboard cards above to manage different aspects of your election system. 
+                    You can manage candidates, view election results, and handle voter registration.
+                </p>
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Tip:</strong> Make sure to verify all candidate information before starting an election.
+                </div>
+            </div>
+        </main>
     </div>
-<script>
-    let currentAdmin = localStorage.getItem("currentAdmin");
-
-document.getElementById("adminName").innerHTML = currentAdmin;
-
-// Navigation functions
-function goToResults(){
-    window.location.href = "results.html";
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+           v
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener("click", function(event) {
+                if (window.innerWidth <= 992) {
+                    if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                        sidebar.classList.remove("active");
+                    }
+                }
+            });
+        });
+        
+        // Set active navigation item
+        function setActive(element) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            element.classList.add('active');
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+        
+        // Navigation functions
+        function goToAddCandidate() {
+            window.location.href = "add_candidates.html";
+        }
+        
+        function goToResults() {
+            window.location.href = "view_results.html";
+        }
+        
+        function goToManageVoters() {
+            window.location.href = "manage_voters.html";
+        }
+        
+       // Update logout function
+function logoutAdmin() {
+    // Call logout API
+    API.post('/admin/logout')
+        .then(() => {
+            Auth.logout();
+        })
+        .catch(() => {
+            Auth.logout();
+        });
 }
-
-function goToAddCandidate(){
-    window.location.href = "addCandidate.html";
-}
-
-function goToManageVoters(){
-    window.location.href = "manageVoters.html";
-}
-
-function logoutAdmin(){
-    localStorage.removeItem("currentAdmin");
-    window.location.href = "index.html";
-}
-
-</script>
+        
+        // Keyboard shortcuts
+        document.addEventListener("keydown", function(e) {
+            // Ctrl + D for dashboard
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                setActive(document.querySelector('.nav-link[href="#"]'));
+            }
+            
+            // Ctrl + C for candidates
+            if (e.ctrlKey && e.key === 'c') {
+                e.preventDefault();
+                goToAddCandidate();
+            }
+            
+            // Ctrl + R for results
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                goToResults();
+            }
+            
+            // Ctrl + L for logout
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                logoutAdmin();
+            }
+            
+            // Escape to close sidebar on mobile
+            if (e.key === 'Escape' && window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
